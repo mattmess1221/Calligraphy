@@ -1,0 +1,63 @@
+/*
+ * I spent too much time on this build script q._.p
+ */
+
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies.classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
+}
+
+apply plugin: 'forge' // TODO this is a liteloader mod!!!
+
+archivesBaseName = "Calligraphy"
+version = "0.0"
+ext.revision = "0"
+
+minecraft {
+    version = "1.8-recommended"
+    runDir = "run"
+}
+reobf {
+    setSrgMcp()
+}
+processResources{
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+    inputs.property "revision", project.ext.revision
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'litemod.json'
+        expand 'version':project.version, 'mcversion':project.minecraft.version, 'revision':project.revision
+    }
+    from(sourceSets.main.resources.srcDirs) {
+        exclude 'litemod.json'
+    }
+}
+configurations {
+    bundle
+    compile.extendsFrom bundle
+}
+dependencies {
+    compile project(":MnM-Utils") // includes liteloader lib
+    bundle project(":Markyp")
+}
+jar {
+    configurations.bundle.each { dep ->
+        from(project.zipTree(dep)){
+            exclude 'META-INF', 'META-INF/**'
+        }
+    }
+    extension 'litemod'
+    appendix project.minecraft.version
+}

@@ -1,0 +1,9 @@
+{
+    "name": "calligraphy",
+    "version": "${version}",
+    "revision": "${revision}",
+    "author": "killjoy1221",
+    "mcversion": "${mcversion}",
+    "description": "Enables writing fancy books on a vanilla server.",
+    "dependsOn": "mnm utils"
+}
